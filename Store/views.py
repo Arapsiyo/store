@@ -28,8 +28,9 @@ def login(request):
     if not user.check_password(request.data['password']):
         return Response("missing user", status=status.HTTP_404_NOT_FOUND)
     token, created = Token.objects.get_or_create(user=user)
+    is_admin = user.is_staff
     serializer = UserSerializer(user)
-    return Response({'token': token.key, 'user': serializer.data})
+    return Response({'token': token.key, 'user': serializer.data, 'admin': is_admin})
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
